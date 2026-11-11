@@ -1,0 +1,148 @@
+<!-- 
+Company: ZDLC
+System: DNS Admin Control Sheet
+Author: ZDLC
+Version: 1.0
+Created: 2026-02-22
+ -->
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<SystemConfiguration version="2.1">
+
+  <Metadata>
+    <Id>admin-system-test</Id>
+    <Created>2026-02-22T00:00:00Z</Created>
+    <Mode>uptime</Mode>
+    <Enforcement>Online</Enforcement>
+    <Profile>Administrator</Profile>
+  </Metadata>
+
+  <SecurityContext>
+    <RunLevel>Administrator</RunLevel>
+    <RequireElevation>true</RequireElevation>
+    <AllowPolicyChanges>true</AllowPolicyChanges>
+    <AllowServiceControl>true</AllowServiceControl>
+    <AllowDriverControl>true</AllowDriverControl>
+    <AllowNetworkControl>true</AllowNetworkControl>
+    <AllowRemoteActions>true</AllowRemoteActions>
+  </SecurityContext>
+
+  <Power>
+    <Default>On</Default>
+    <EnforceState>On</EnforceState>
+  </Power>
+
+  <Components>
+    <Component name="CPU"><Requires>Power</Requires></Component>
+    <Component name="Display"><Requires>Power</Requires></Component>
+    <Component name="Storage"><Requires>Power</Requires></Component>
+    <Component name="Network"><Requires>Power</Requires></Component>
+    <Component name="GPU"><Requires>Power</Requires></Component>
+    <Component name="AudioDevice"><Requires>Power</Requires></Component>
+  </Components>
+
+  <KernelSubsystems>
+    <Subsystem name="Kernel"><Requires>CPU</Requires><Requires>Power</Requires></Subsystem>
+    <Subsystem name="DisplayDriver"><Requires>Kernel</Requires><Requires>Display</Requires></Subsystem>
+    <Subsystem name="NetworkDriver"><Requires>Kernel</Requires><Requires>Network</Requires></Subsystem>
+    <Subsystem name="StorageDriver"><Requires>Kernel</Requires><Requires>Storage</Requires></Subsystem>
+  </KernelSubsystems>
+
+  <Services>
+    <Service name="Browser"><Requires>Kernel</Requires><Requires>Network</Requires><Requires>Display</Requires></Service>
+    <Service name="MediaPlayer"><Requires>Kernel</Requires><Requires>Storage</Requires><Requires>Display</Requires><Requires>AudioDevice</Requires></Service>
+    <Service name="ScreenCapture"><Requires>DisplayDriver</Requires><Requires>Kernel</Requires></Service>
+    <Service name="RemoteAccess"><Requires>NetworkDriver</Requires><Requires>Kernel</Requires></Service>
+    <Service name="SystemTelemetry"><Requires>Kernel</Requires><Requires>Network</Requires></Service>
+    <Service name="AdminConsole"><Requires>Kernel</Requires><Requires>Display</Requires></Service>
+    <Service name="PolicyManager"><Requires>Kernel</Requires><Requires>Storage</Requires></Service>
+  </Services>
+
+  <AdministrativeControls>
+    <Control name="UserManagement" state="Enabled"/>
+    <Control name="ServiceManagement" state="Enabled"/>
+    <Control name="DriverManagement" state="Enabled"/>
+    <Control name="NetworkManagement" state="Enabled"/>
+    <Control name="PolicyManagement" state="Enabled"/>
+    <Control name="SessionAudit" state="Enabled"/>
+    <Control name="OverrideProtection" state="Restricted"/>
+  </AdministrativeControls>
+
+  <NetworkAccess default="Allow">
+    <Allow>
+      <Requires>Browser</Requires>
+      <Requires>NetworkDriver</Requires>
+    </Allow>
+    <Allow>
+      <Requires>RemoteAccess</Requires>
+      <Requires>NetworkDriver</Requires>
+    </Allow>
+    <Allow>
+      <Requires>AdminConsole</Requires>
+      <Requires>NetworkDriver</Requires>
+    </Allow>
+  </NetworkAccess>
+
+  <ScreenControl default="Enabled">
+    <Capture>Enabled</Capture>
+    <RemoteShare>Enabled</RemoteShare>
+    <AdminOverlay>Enabled</AdminOverlay>
+  </ScreenControl>
+
+  <AuditPolicy>
+    <LogStartup>true</LogStartup>
+    <LogShutdown>true</LogShutdown>
+    <LogPolicyChanges>true</LogPolicyChanges>
+    <LogServiceChanges>true</LogServiceChanges>
+    <LogDriverChanges>true</LogDriverChanges>
+    <LogNetworkChanges>true</LogNetworkChanges>
+    <LogAdminActions>true</LogAdminActions>
+  </AuditPolicy>
+
+  <StartupSequence>
+    <Step>CPU</Step>
+    <Step>Kernel</Step>
+    <Step>StorageDriver</Step>
+    <Step>DisplayDriver</Step>
+    <Step>NetworkDriver</Step>
+    <Step>PolicyManager</Step>
+    <Step>AdminConsole</Step>
+    <Step>SystemTelemetry</Step>
+    <Step>RemoteAccess</Step>
+    <Step>ScreenCapture</Step>
+    <Step>MediaPlayer</Step>
+    <Step>Browser</Step>
+  </StartupSequence>
+
+  <Behavior>
+    <WhenPowerOn>
+      <AllComponents>Active</AllComponents>
+      <AllServices>Active</AllServices>
+      <NetworkAccess>Allow</NetworkAccess>
+      <ScreenControl>Enabled</ScreenControl>
+      <AdministrativeControls>Enabled</AdministrativeControls>
+    </WhenPowerOn>
+  </Behavior>
+
+  <StatusOutput>
+    <Include>Power</Include>
+    <Include>CPU</Include>
+    <Include>Display</Include>
+    <Include>Storage</Include>
+    <Include>Network</Include>
+    <Include>GPU</Include>
+    <Include>AudioDevice</Include>
+    <Include>Kernel</Include>
+    <Include>Browser</Include>
+    <Include>MediaPlayer</Include>
+    <Include>ScreenCapture</Include>
+    <Include>RemoteAccess</Include>
+    <Include>SystemTelemetry</Include>
+    <Include>AdminConsole</Include>
+    <Include>PolicyManager</Include>
+    <Include>NetworkAccess</Include>
+  </StatusOutput>
+
+</SystemConfiguration>
